@@ -1,10 +1,11 @@
 const discord = require('discord.js');
 const client = new discord.Client();
-const prefix = '!';
 const NXErrorCodes = require('./NXErrorCodes.js');
-var fs = require('fs');
-var os = require('os');
-const version = '0.1.0';
+const fs = require('fs');
+const os = require('os');
+const bent = require('bent');
+const version = '0.2.0';
+const prefix = '!';
 
 //Run when the bot is ready
 client.on('ready', () => {
@@ -32,6 +33,7 @@ client.on('message', msg =>{
         var module = 0;
         var description = 0;
         //Check which format the code is in
+        //Special cases that need to be added in manually: 0xA83
         if(errorCode.startsWith('0x'))
         {
             module = parseInt(errorCode) & 0xff; //Module is the first 8 bits so we do bitwise and with 255
@@ -48,12 +50,15 @@ client.on('message', msg =>{
             msg.channel.send("Unkown module");
             return;
         }
+        var errorCodeText = (2000 + module) + '-' + description.toString().padStart(4, '0') + ' / 0x' + ((description << 9) + module).toString(16);
         //Create a new embed with the error info
         var errorEmbed = new discord.MessageEmbed()
         .setColor('#fc0303')
-        .setTitle('Switch error code info')
+        .setAuthor('Switch error code info', client.user.avatarURL(), 'https://github.com/CompSciOrBust/PhemeBot')
+        .setTitle(errorCodeText)
+        .setURL('https://switchbrew.org/wiki/Error_codes#Error_codes')
         .setDescription(NXErrorCodes.NXModules[module].descriptions[description])
-        .addFields({name: 'Module', value: NXErrorCodes.NXModules[module].moduleName, inline: true}, {name: 'Description', value: description, inline: true});
+        .addFields({name: 'Module', value: NXErrorCodes.NXModules[module].moduleName + ' (' + module + ')', inline: true}, {name: 'Description', value: description, inline: true});
         msg.channel.send(errorEmbed);
         break;
         //Help command
@@ -62,7 +67,11 @@ client.on('message', msg =>{
         .setColor('#fefefe')
         .setTitle('Pheme commands')
         .setDescription('The following commands are supported (non case sensitive)')
-        .addFields({name: prefix + 'Help', value: 'Gives info about Pheme commands (obviously)'}, {name: prefix + 'About', value: 'Gives info about Pheme'}, {name: prefix + 'Tester', value: 'Toggles if you are a tester'}, {name: prefix + 'Serr <error code>', value: 'Gives info about a Nintendo Switch error code'});
+        .addFields({name: prefix + 'Help', value: 'Gives info about Pheme commands (obviously)'},
+        {name: prefix + 'About', value: 'Gives info about Pheme'},
+        {name: prefix + 'Tester', value: 'Toggles if you are a tester'},
+        {name: prefix + 'Serr <error code>', value: 'Gives info about a Nintendo Switch error code'},
+        {name: prefix + 'Amiibo <Amiibo name>', value: 'Gets information about an Amiibo'});
         msg.channel.send(helpEmbed);
         break;
         //about command
@@ -73,6 +82,23 @@ client.on('message', msg =>{
         .setDescription('Pheme by CompSciOrBust')
         .addFields({name: 'Version', value: version, inline: true}, {name: 'Host OS', value: os.type(), inline: true});
         msg.channel.send(aboutEmbed);
+        break;
+        //Amiibo info command
+        case prefix + 'amiibo':
+        const getJSON = bent('json');
+        const amiiboName = msg.content.split(' ')[1];
+        getJSON('https://www.amiiboapi.com/api/amiibo/?name=' + amiiboName)
+        .then(body => {
+            const amiibo = body.amiibo[0];
+            var amiiboEmbed = new discord.MessageEmbed()
+            .setColor('#fc0303')
+            .setTitle(amiibo.name)
+            .addFields({name: 'Amiibo series', value: amiibo.amiiboSeries, inline: true}, {name: 'Game series', value: amiibo.gameSeries, inline: true}, {name: 'Amiibo ID', value: amiibo.head + amiibo.tail, inline: true})
+            .setImage(amiibo.image)
+            .setURL('https://www.amiiboapi.com/');
+            msg.channel.send(amiiboEmbed);
+        })
+        .catch(error => {msg.channel.send(error.message + ' (did you enter the correct Amiibo name?)');});
         break;
     }
 });

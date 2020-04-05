@@ -6,6 +6,7 @@ let errorInfo = class {
     constructor(name) {this.moduleName = name};
 };
 
+//Official Nintendo modules
 var kernelInfo = new errorInfo('Kernel');
 var FSInfo = new errorInfo('FS');
 var OSInfo = new errorInfo('OS (Memory, Thread, Mutex, NVIDIA)');
@@ -44,7 +45,7 @@ var XCDInfo = new errorInfo('XCD');
 var NIFMInfo = new errorInfo('NIFM');
 var HwopusInfo = new errorInfo('Hwopus');
 var SasbusInfo = new errorInfo('Sasbus'); // There are two sasbus variables
-var BluetoothInfo = new errorInfo('Bluetooth');
+var bluetoothInfo = new errorInfo('Bluetooth');
 var VIInfo = new errorInfo('VI');
 var NFPInfo = new errorInfo('NFP');
 var timeInfo = new errorInfo('Time');
@@ -106,7 +107,7 @@ var LEDInfo = new errorInfo('Led');
 var clkrstInfo = new errorInfo('Clkrst');
 var HIDInfo = new errorInfo('HID');
 var LDNInfo = new errorInfo('LDN');
-var lrsensorInfo = new errorInfo('lrsensor');
+var IRsensorInfo = new errorInfo('lrsensor');
 var captureInfo = new errorInfo('Capture');
 var manuInfo = new errorInfo('Manu');
 var ATKInfo = new errorInfo('ATK');
@@ -121,6 +122,13 @@ var websocketInfo = new errorInfo('Websocket');
 var notificationInfo = new errorInfo('Notification');
 var insInfo = new errorInfo('Ins');
 var lp2pInfo = new errorInfo('Lp2p');
+
+//Homebrew modules
+var libnxInfo = new errorInfo('libnx');
+var homebrewABIInfo = new errorInfo('Homebrew ABI');
+var homebrewLoaderInfo = new errorInfo('Homebrew Loader');
+var libnxNVIDIAErrorsInfo = new errorInfo('libnx NVIDIA errors');
+var libnxBinderErrorsInfo = new errorInfo('libnx Binder errors');
 
 kernelInfo.descriptions = {
     7 : 'Session count exceeded ',
@@ -485,14 +493,491 @@ HIPCInfo.descriptions = {
     403 : 'Unknown request type',
     491 : 'IPC Query 1 failed.'
 }
-//Module 15
+
 PMInfo.descriptions = {
     1 : 'Pid not found',
     3 : 'Process has no pending events',
     5 : 'Application already running'
 }
 
-var NXModules = {1 : kernelInfo, 2 : FSInfo, 3 : OSInfo, 4 : HtcsInfo, 5 : NCMInfo, 6 : DDInfo, 7 : debugMonitorInfo, 8 : LRInfo, 9 : loaderInfo, 10 : CMIFInfo, 11 : HIPCInfo, 15 : PMInfo, 16 : NSInfo, 17 : BsdsocketsInfo, 18 : HtcInfo, 19 : TSCInfo, 20 : NCMInfo, 21 : SMInfo, 22 : ROInfo, 23 : GCInfo, 24 : SDMMCInfo, 25 : OVLNInfo, 26 : SPLInfo, 27 : socketInfo, 29 : HtclowInfo, 30 : busInfo, 31 : HtcfsInfo, 32 : AsyncInfo, 100 : ETHCInfo, 101 : I2CInfo, 102 : GPIOInfo, 103 : UARTInfo, 105 : settingsInfo, 107 : WLANInfo, 108 : XCDInfo, 110 : NIFMInfo, 111 : HwopusInfo, 112 : SasbusInfo, 113 : bluetoothInfo, 114 : VIInfo, 115 : NFPInfo, 116 : timeInfo, 117 : FGMInfo, 118 : OEInfo, 120 : PCIeInfo, 121 : friendsInfo, 122 : BCATInfo, 123 : SSLInfo, 124 : accountInfo, 125 : newsInfo, 126 : miiInfo, 127 : NFCInfo, 128 : AMInfo, 129 : playReportInfo, 130 : AHIDInfo, 132 : homeMenuInfo, 133 : PCVInfo, 134 : OMMInfo, 135 : BPCInfo, 136 : PSMInfo, 137 : NIMInfo, 138 : PSCInfo, 139 : TCInfo, 140 : USBInfo, 141 : NSDInfo, 142 : PCTLinfo, 143 : BTMInfo, 144 : LAInfo, 145 : ETicketInfo, 146 : NGCInfo, 147 : errorReportInfo, 148 : APMInfo, 149 : CECInfo, 150 : profilerInfo, 151 : errorUploadInfo, 153 : audioInfo, 154 : NPNSInfo, 155 : NPNSXMPPStreamInfo, 157 : ARPInfo, 158 : updaterInfo, 159 : SWKBDInfo, 161 : MifareInfo, 162 : userlandAInfo, 163 : fatalInfo, 164 : ECInfo, 165 : SPSMInfo, 167 : BGTCInfo, 168 : userlandCInfo, 169 : SasbusPeriodicReceiveModeInfo, 178 : PDMInfo, 179 : OLSCInfo, 180 : SREPOInfo, 181 : DauthInfo, 187 : SasbusInfo, 189 : PWMInfo, 191 : RTCInfo, 192 : regulatorInfo, 193 : LEDInfo, 197 : clkrstInfo, 202 : HIDInfo, 203 : LDNInfo, 205 : lrsensorInfo, 206 : captureInfo, 208 : manuInfo, 209 : ATKInfo, 210 : webInfo, 211 : LCSInfo, 212 : GRCInfo, 214 : albumInfo, 216 : migrationInfo, 217 : migrationIdcServerInfo, 218 : hidbusInfo, 223 : websocketInfo, 229 : notificationInfo, 230 : insInfo, 231 : lp2pInfo};
+NSInfo.descriptions = {
+    2 : 'Title-id not found',
+    120 : 'Sysupdate not required',
+    251 : 'Unexpected StorageId',
+    340 : 'IsAnyInternetRequestAccepted with the output from GetClientId returned false.',
+    801 : 'SystemDeliveryInfo system_delivery_protocol_version is less than the system-setting.',
+    802 : 'SystemDeliveryInfo system_delivery_protocol_version is larger than the system-setting.',
+    931 : 'Invalid SystemDeliveryInfo HMAC / invalid Meta Id.',
+    892 : 'Unknown state ref-count is zero.'
+}
+
+SMInfo.descriptions = {
+    1 : 'Out of processes',
+    2 : 'Not initialized.',
+    3 : 'Max sessions',
+    4 : 'Service already registered',
+    5 : 'Out of services',
+    6 : 'Invalid name (all zeroes)',
+    7 : 'Service not registered',
+    8 : 'Permission denied',
+    9 : 'Service Access Control too big.'
+}
+
+
+ROInfo.descriptions = {
+    2 : 'Address space is full',
+    3 : 'NRO already loaded',
+    4 : 'Invalid NRO header values',
+    6 : 'Bad NRR magic',
+    8 : 'Reached max NRR count',
+    9 : 'Unable to verify NRO hash or NRR signature',
+    1025 : 'Address not page-aligned',
+    1026 : 'Incorrect NRO size',
+    1028 : 'NRO not loaded',
+    1029 : 'NRR not loaded',
+    1030 : 'Already initialized',
+    1031 : 'Not initialized'
+}
+
+SPLInfo.descriptions = {
+    1 : 'SMC is not implemented',
+    2 : 'SMC argument is invalid',
+    3 : 'SMC is currently in progress/secmon is busy',
+    4 : 'Secmon not currently performing async operation',
+    5 : 'Invalid SMC async callback key',
+    6 : 'SMC is blacklisted during current boot',
+    100 : 'Invalid (buffer) size',
+    101 : 'Unknown SMC error',
+    101 : 'Decryption failure',
+    104 : 'No AES keyslots available',
+    105 : 'Invalid AES keyslot',
+    106 : 'BootReason already set',
+    107 : 'BootReason not set',
+    108 : 'Invalid argument'
+}
+
+homebrewLoaderInfo.descriptions = {
+    3 : 'Failed to open NRO file. May also happen when SD card isn\'t inserted / SD mounting failed earlier.',
+    4 : 'Failed to read NRO header.',
+    5 : 'Invalid NRO magic.',
+    6 : 'Invalid NRO segments.',
+    7 : 'Failed to read NRO.',
+    9 : 'Failed to allocate heap.',
+    18 : 'Failed to map code-binary memory.',
+    19 : 'Failed to map code memory (.text).',
+    20 : 'Failed to map code memory (.rodata).',
+    21 : 'Failed to map code memory (.data+.bss).',
+    24 : 'Failed to unmap code memory (.text).',
+    25 : 'Failed to unmap code memory (.rodata).',
+    26 : 'Failed to unmap code memory (.data+.bss).'
+}
+
+settingsInfo.descriptions = {
+    201 : 'Null settings name',
+    202 : 'Null settings key',
+    203 : 'Null settings value',
+    205 : 'Null settings value buffer',
+    208 : 'Null setting value size buffer',
+    209 : 'Null debug mode flag buffer',
+    221 : 'Setting group name has zero length',
+    222 : 'Empty settings item key',
+    241 : 'Setting group name is too long (64 character limit?)',
+    242 : 'Setting name is too long (64 character limit?)',
+    261 : 'Setting group name ends with \'.\' or contains invalid characters (allowed: [a-z0-9_\-.])',
+    262 : 'Setting name ends with \'.\' or contains invalid characters (allowed: [a-z0-9_\-.])',
+    621 : 'Null language code buffer',
+    631 : 'Null network settings buffer',
+    632 : 'Null network settings output count buffer',
+    641 : 'Null backlight settings buffer',
+    651 : 'Null Bluetooth device setting buffer',
+    652 : 'Null Bluetooth device setting output count buffer',
+    653 : 'Null Bluetooth enable flag buffer',
+    654 : 'Null Bluetooth AFH enable flag buffer',
+    655 : 'Null Bluetooth boost enable flag buffer',
+    656 : 'Null BLE pairing settings buffer',
+    657 : 'Null BLE pairing settings entry count buffer',
+    661 : 'Null external steady clock source ID buffer',
+    662 : 'Null user system clock context buffer',
+    663 : 'Null network system clock context buffer',
+    664 : 'Null user system clock automatic correction enabled flag buffer',
+    665 : 'Null shutdown RTC value buffer',
+    666 : 'Null external steady clock internal offset buffer',
+    671 : 'Null account settings buffer',
+    681 : 'Null audio volume buffer',
+    683 : 'Null ForceMuteOnHeadphoneRemoved buffer',
+    684 : 'Null headphone volume warning count buffer',
+    687 : 'Invalid audio output mode',
+    688 : 'Null headphone volume update flag buffer',
+    691 : 'Null console information upload flag buffer',
+    701 : 'Null automatic application download flag buffer',
+    702 : 'Null notification settings buffer',
+    703 : 'Null account notification settings entry count buffer',
+    704 : 'Null account notification settings buffer',
+    711 : 'Null vibration master volume buffer',
+    712 : 'Null NX controller settings buffer',
+    713 : 'Null NX controller settings entry count buffer',
+    714 : 'Null USB full key enable flag buffer',
+    721 : 'Null TV settings buffer',
+    722 : 'Null EDID buffer',
+    731 : 'Null data deletion settings buffer',
+    741 : 'Null initial system applet program ID buffer',
+    742 : 'Null overlay disp program ID buffer',
+    743 : 'Null IsInRepairProcess buffer',
+    744 : 'Null RequiresRunRepairTimeReviser buffer',
+    751 : 'Null device timezone location name buffer',
+    761 : 'Null primary album storage buffer',
+    771 : 'Null USB 3.0 enable flag buffer',
+    772 : 'Null USB Type-C power source circuit version buffer',
+    781 : 'Null battery lot buffer',
+    791 : 'Null serial number buffer',
+    801 : 'Null lock screen flag buffer',
+    803 : 'Null color set ID buffer',
+    804 : 'Null quest flag buffer',
+    805 : 'Null wireless certification file size buffer',
+    806 : 'Null wireless certification file buffer',
+    807 : 'Null initial launch settings buffer',
+    808 : 'Null device nickname buffer',
+    809 : 'Null battery percentage flag buffer',
+    810 : 'Null applet launch flags buffer',
+    1012 : 'Null wireless LAN enable flag buffer',
+    1021 : 'Null product model buffer',
+    1031 : 'Null NFC enable flag buffer',
+    1041 : 'Null ECI device certificate buffer',
+    1042 : 'Null E-Ticket device certificate buffer',
+    1051 : 'Null sleep settings buffer',
+    1061 : 'Null EULA version buffer',
+    1062 : 'Null EULA version entry count buffer',
+    1071 : 'Null LDN channel buffer',
+    1081 : 'Null SSL key buffer',
+    1082 : 'Null SSL certificate buffer',
+    1091 : 'Null telemetry flags buffer',
+    1101 : 'Null Gamecard key buffer',
+    1102 : 'Null Gamecard certificate buffer',
+    1111 : 'Null PTM battery lot buffer',
+    1112 : 'Null PTM fuel gauge parameter buffer',
+    1121 : 'Null ECI device key buffer',
+    1122 : 'Null E-Ticket device key buffer',
+    1131 : 'Null speaker parameter buffer',
+    1141 : 'Null firmware version buffer',
+    1142 : 'Null firmware version digest buffer',
+    1143 : 'Null rebootless system update version buffer',
+    1151 : 'Null Mii author ID buffer',
+    1161 : 'Null fatal flags buffer',
+    1171 : 'Null auto update enable flag buffer',
+    1181 : 'Null external RTC reset flag buffer',
+    1191 : 'Null push notification activity mode buffer',
+    1201 : 'Null service discovery control setting buffer',
+    1211 : 'Null error report share permission buffer',
+    1221 : 'Null LCD vendor ID buffer',
+    1231 : 'Null console SixAxis sensor acceleration bias buffer',
+    1232 : 'Null console SixAxis sensor angular velocity bias buffer',
+    1233 : 'Null console SixAxis sensor acceleration gain buffer',
+    1234 : 'Null console SixAxis sensor angular velocity gain buffer',
+    1235 : 'Null console SixAxis sensor angular velocity time bias buffer',
+    1236 : 'Null console SixAxis sensor angular acceleration buffer',
+    1241 : 'Null keyboard layout buffer',
+    1245 : 'Invalid keyboard layout',
+    1251 : 'Null web inspector flag buffer',
+    1252 : 'Null allowed SSL hosts buffer',
+    1253 : 'Null allowed SSL hosts entry count buffer',
+    1254 : 'Null host FS mount point buffer',
+    1271 : 'Null Amiibo key buffer',
+    1272 : 'Null Amiibo ECQV certificate buffer',
+    1273 : 'Null Amiibo ECDSA certificate buffer',
+    1274 : 'Null Amiibo ECQV BLS key buffer',
+    1275 : 'Null Amiibo ECQV BLS certificate buffer',
+    1276 : 'Null Amiibo ECQV BLS root certificate buffer'
+}
+
+VIInfo.descriptions = {
+    1 : 'Generic error',
+    6 : 'Unsupported operation'
+}
+
+timeInfo.descriptions = {
+    0 : 'Time service not initialized',
+    1 : 'Permission denied',
+    102 : 'Time not set / Clock Source Id mismatch',
+    200 : 'Invalid time comparison',
+    201 : 'Signed overflow/underflow',
+    801 : 'Memory allocation failure',
+    901 : 'Null pointer',
+    902 : 'Value out of valid range',
+    903 : 'TimeZoneRule conversion failed',
+    989 : 'TimeZone location name not found',
+    990 : 'Unimplemented functionality'
+}
+
+friendsInfo.descriptions = {
+    6 : 'IsAnyInternetRequestAccepted with the output from GetClientId returned false.'
+}
+
+BCATInfo.descriptions = {
+    1 : 'Invalid argument',
+    2 : 'Object not found',
+    3 : 'Object locked/in used',
+    4 : 'Target already mounted',
+    5 : 'Target not mounted',
+    6 : 'Object already opened',
+    7 : 'Object not opened',
+    8 : 'IsAnyInternetRequestAccepted with the output from GetClientId returned false.',
+    80 : 'Passphrase not found',
+    81 : 'Data verification failed',
+    90 : 'Invalid API call',
+    98 : 'Invalid operation'
+}
+
+accountInfo.descriptions = {
+    20 : 'Argument is NULL',
+    22 : 'Argument is invalid',
+    30 : 'Bad input buffer size',
+    32 : 'Invalid input buffer',
+    59 : 'IsAnyInternetRequestAccepted with the output from GetClientId returned false.'
+}
+
+miiInfo.descriptions = {
+    1 : 'Invalid argument',
+    4 : 'Entry not found',
+    67 : 'Invalid database signature value (should be "NFDB")',
+    69 : 'Invalid database entry count',
+    204 : 'Development/debug-only behavior'
+}
+
+AMInfo.descriptions = {
+    2 : 'IStorage not available.',
+    35 : 'Error while launching applet.',
+    37 : 'Title-ID not found. Caused by code 0x410 when applet launch fails',
+    500 : 'Invalid input',
+    502 : 'IStorage has already been opened by another accessor',
+    503 : 'IStorage Read/Write out-of-bounds',
+    511 : 'IStorage opened as wrong type (data opened as transfermem, transfermem opened as data)',
+    512 : 'Unbalanced fatal section leave (returned when executing LeaveFatalSection without a preceding EnterFatalSection call)',
+    600 : 'Failed to allocate memory for IStorage',
+    712 : 'Thread stack pool exhausted (out of memory)',
+    974 : 'DebugMode not enabled',
+    980 : 'am.debug!dev_function setting needs to be set / DebugMode not enabled',
+    998 : 'Not implemented'
+}
+
+playReportInfo.descriptions = {
+    102 : 'Transmission not agreed',
+    105 : 'Network unavailable',
+    1005 : 'HTTP error: Couldnt resolve proxy',
+    1006 : 'HTTP error: Couldnt resolve host',
+    1007 : 'HTTP error: Couldnt connect',
+    1023 : 'HTTP error: Write error',
+    1026 : 'HTTP error: Read error',
+    1027 : 'HTTP error: Out of memory',
+    1028 : 'HTTP error: Operation timedout',
+    1035 : 'HTTP error: SSL connect error',
+    1051 : 'HTTP error: Peer failed verification',
+    1052 : 'HTTP error: Got nothing',
+    1055 : 'HTTP error: Send error',
+    1056 : 'HTTP error: Recv error',
+    1058 : 'HTTP error: SSL cert problem',
+    1059 : 'HTTP error: SSL cipher',
+    1060 : 'HTTP error: SSL CA cert',
+    2400 : 'Server error: Status 400',
+    2401 : 'Server error: Status 401',
+    2403 : 'Server error: Status 403',
+    2500 : 'Server error: Status 500',
+    2503 : 'Server error: Status 503',
+    2504 : 'Server error: Status 504'
+}
+
+PCVInfo.descriptions = {
+    2 : 'Invalid DVFS table ID',
+    4 : 'Invalid parameter'
+}
+
+NIMInfo.descriptions = {
+    10  : 'Already initialized.',
+    30  : 'Task not found.',
+    40  : 'Memory allocation failed / bad input.',
+    330  : 'ContentMetaType doesn\'t match SystemUpdate.',
+    5001  : 'One of the following socket errors occurred: ENETDOWN, ECONNRESET, EHOSTDOWN, EHOSTUNREACH, or EPIPE. Also occurs when the received size doesn\'t match the expected size (recvfrom() ret with meta_size data receiving).',
+    5010  : 'Socket was shutdown() due to the async operation being cancelled.',
+    5020  : 'Too many internal output entries with nim cmd42, system is Internet-connected, or an unrecognized socket error occured.',
+    5100  : 'Connection timeout.',
+    5410  : 'Invalid ID.',
+    5420  : 'Invalid magicnum. Can also be caused by the connection being closed by the peer, since non-negative return values from recv() are ignored in this case.',
+    5430  : 'Invalid data_size.',
+    5440  : 'The input ContentMetaKey doesn\'t match the ContentMetaKey in state.',
+    5450  : 'Invalid meta_size.',
+    7001  : 'HTTP invalid response code (>=600).',
+    7002  : 'HTTP invalid client response code (4xx).',
+    7003  : 'HTTP invalid server response code (5xx).',
+    7004  : 'HTTP invalid redirect response code (3xx).',
+    7300 : 'HTTP response code 300.',
+    7301 : 'HTTP response code 301.',
+    7302 : 'HTTP response code 302.',
+    7303 : 'HTTP response code 303.',
+    7304 : 'HTTP response code 304.',
+    7305 : 'HTTP response code 305.',
+    7306 : 'HTTP response code 306.',
+    7307 : 'HTTP response code 307.',
+    7308 : 'HTTP response code 308.',
+    7400 : 'HTTP response code 400.',
+    7401 : 'HTTP response code 401.',
+    7402 : 'HTTP response code 402.',
+    7403 : 'HTTP response code 403.',
+    7404 : 'HTTP response code 404.',
+    7405 : 'HTTP response code 405.',
+    7406 : 'HTTP response code 406.',
+    7407 : 'HTTP response code 407.',
+    7408 : 'HTTP response code 408.',
+    7409 : 'HTTP response code 409.',
+    7410 : 'HTTP response code 410.',
+    7411 : 'HTTP response code 411.',
+    7412 : 'HTTP response code 412.',
+    7413 : 'HTTP response code 413.',
+    7414 : 'HTTP response code 414.',
+    7415 : 'HTTP response code 415.',
+    7416 : 'HTTP response code 416.',
+    7417 : 'HTTP response code 417.',
+    //Switchbrew has incorrect descriptions??
+    7500  : 'HTTP response code 500-308.',
+    7501 : 'HTTP response code 500-308.',
+    7502 : 'HTTP response code 500-308.',
+    7503 : 'HTTP response code 500-308.',
+    7504 : 'HTTP response code 500-308.',
+    7505 : 'HTTP response code 500-308.',
+    7506 : 'HTTP response code 500-308.',
+    7507 : 'HTTP response code 500-308.',
+    7508 : 'HTTP response code 500-308.',
+    7509 : 'HTTP response code 500-308.',
+    7800  : 'Unknown/invalid libcurl error.',
+    //Todo: 8001-8096
+    //8001-8096  : 'libcurl error 1-96. Some of the libcurl errors in the error-table map to the above unknown-libcurl-error however.'
+}
+
+PSCInfo.descriptions = {
+    3 : 'Not initialized.'
+}
+
+USBInfo.descriptions = {
+    51 : 'USB data-transfer in progress',
+    106 : 'Invalid descriptor',
+    201 : 'USB device not bound / interface already enabled'
+}
+
+PCTLInfo.descriptions = {
+    223 : 'IsAnyInternetRequestAccepted with the output from GetClientId returned false.'
+}
+
+LAInfo.descriptions = {
+    1 : 'Exited Abnormally (ExitReason == Abormal)',
+    3 : 'Canceled (ExitReason == Canceled)',
+    4 : 'Rejected',
+    5 : 'Exited Unexpectedly (ExitReason == Unexpected)'
+}
+
+audioInfo.descriptions = {
+    1 : 'Invalid audio device',
+    2 : 'Operation couldn\'t complete successfully',
+    3 : 'Invalid sample rate',
+    4 : 'Buffer size too small',
+    8 : 'Too many buffers are still unreleased',
+    10 : 'Invalid channel count',
+    513 : 'Invalid/Unsupported operation',
+    1536 : 'Invalid handle',
+    1540 : 'Audio output was already started'
+}
+
+ARPInfo.descriptions = {
+    30 : 'Address is NULL',
+    31 : 'PID is NULL',
+    42 : 'Already bound',
+    102 : 'Invalid PID'
+}
+
+updaterInfo.descriptions = {
+    2 : 'BootImagePackage not found',
+    3 : 'Invalid BootImagePackage',
+    4 : 'Work buffer too small',
+    5 : 'Work buffer not aligned',
+    6 : 'BootImages need repair'
+}
+
+fatalInfo.descriptions = {
+    5 : 'System is booting up repair process without VOL+ held down.',
+    6 : 'System is booting up repair process that requires RepairTimeReviser but does not have special cartridge inserted.'
+}
+
+ECInfo.descriptions = {
+    56 : 'IsAnyInternetRequestAccepted with the output from GetClientId returned false.'
+}
+
+PDMInfo.descriptions = {
+    100 : 'Invalid user ID',
+    101 : 'User does not exist',
+    150 : 'Service unavailable',
+    200 : 'File storage failure'
+}
+
+SREPOInfo.descriptions = {
+    5 : 'Invalid event ID'
+}
+
+DauthInfo.descriptions = {
+    4007 : 'Device authentication error: System update required',
+    4008 : 'Device authentication error: Banned',
+    4009 : 'Device authentication error: Internal server error',
+    4007 : 'Device authentication error: Under maintenance'
+}
+
+HIDInfo.descriptions = {
+    709 : 'Npad ID is out of range. '
+}
+
+IRsensorInfo.descriptions = {
+    120 : 'IR image data not available/ready.',
+    212 : 'IR camera handle pointer is null.',
+    204 : 'IR camera invalid handle value.'
+}
+
+captureInfo.descriptions = {
+    2 : 'Invalid argument.',
+    3 : 'Out of memory.',
+    8 : 'Out of range. Buffer needs to be aligned.',
+    12 : 'Invalid FileId.',
+    13 : 'Invalid storage ID.',
+    14 : 'Invalid content type.',
+    21 : 'Failed to mount Image Directory.',
+    23 : 'File too big.',
+    24 : 'Invalid file size.',
+    30 : 'Buffer insufficient.',
+    1401 : 'Too many files already saved.'
+}
+
+hidbusInfo.descriptions = {
+    2 : 'StatusManager entry IsValid flag not set, or controller-update currently in-progress.',
+    3 : 'Controller-update failed via the LibraryApplet.',
+    4 : 'Invalid BusHandle.',
+    5 : 'StatusManager entry flag +0x0 not set, or device not connected.',
+    7 : 'PollingReceivedData not available.',
+    8 : 'StatusManager entry DeviceEnabled flag not set, or flag +0x0 not set.',
+    9 : 'ExternalDeviceId mismatch.',
+    10 : 'BusHandle already initialized.'
+}
+
+userlandAInfo.descriptions = {
+    2 : 'Can be triggered by running svcBreak. The svcBreak params have no effect on the value of the thrown error-code.'
+}
+
+userlandCInfo.descriptions = {
+    0 : 'Userland ARM undefined instruction exception',
+    1 : 'Userland ARM prefetch-abort due to PC set to non-executable region',
+    2 : 'Userland ARM data abort. Also caused by abnormal process termination via svcExitProcess. Note: directly jumping to nnMain()-retaddr from non-main-thread has the same result.',
+    3 : 'Userland PC address not aligned to 4 bytes',
+    8 : 'Can occur when attempting to call an svc outside the whitelist'
+}
+
+//For the special 0xA83 error code
+var A83Info = new errorInfo('Unknown');
+A83Info.descriptions = {5 : 'Unrecognized applet ID'};
+
+var NXModules = {1 : kernelInfo, 2 : FSInfo, 3 : OSInfo, 4 : HtcsInfo, 5 : NCMInfo, 6 : DDInfo, 7 : debugMonitorInfo, 8 : LRInfo, 9 : loaderInfo, 10 : CMIFInfo, 11 : HIPCInfo, 15 : PMInfo, 16 : NSInfo, 17 : BsdsocketsInfo, 18 : HtcInfo, 19 : TSCInfo, 20 : NCMInfo, 21 : SMInfo, 22 : ROInfo, 23 : GCInfo, 24 : SDMMCInfo, 25 : OVLNInfo, 26 : SPLInfo, 27 : socketInfo, 29 : HtclowInfo, 30 : busInfo, 31 : HtcfsInfo, 32 : AsyncInfo, 100 : ETHCInfo, 101 : I2CInfo, 102 : GPIOInfo, 103 : UARTInfo, 105 : settingsInfo, 107 : WLANInfo, 108 : XCDInfo, 110 : NIFMInfo, 111 : HwopusInfo, 112 : SasbusInfo, 113 : bluetoothInfo, 114 : VIInfo, 115 : NFPInfo, 116 : timeInfo, 117 : FGMInfo, 118 : OEInfo, 120 : PCIeInfo, 121 : friendsInfo, 122 : BCATInfo, 123 : SSLInfo, 124 : accountInfo, 125 : newsInfo, 126 : miiInfo, 127 : NFCInfo, 128 : AMInfo, 129 : playReportInfo, 130 : AHIDInfo, 132 : homeMenuInfo, 133 : PCVInfo, 134 : OMMInfo, 135 : BPCInfo, 136 : PSMInfo, 137 : NIMInfo, 138 : PSCInfo, 139 : TCInfo, 140 : USBInfo, 141 : NSDInfo, 142 : PCTLInfo, 143 : BTMInfo, 144 : LAInfo, 145 : ETicketInfo, 146 : NGCInfo, 147 : errorReportInfo, 148 : APMInfo, 149 : CECInfo, 150 : profilerInfo, 151 : errorUploadInfo, 153 : audioInfo, 154 : NPNSInfo, 155 : NPNSXMPPStreamInfo, 157 : ARPInfo, 158 : updaterInfo, 159 : SWKBDInfo, 161 : mifareInfo, 162 : userlandAInfo, 163 : fatalInfo, 164 : ECInfo, 165 : SPSMInfo, 167 : BGTCInfo, 168 : userlandCInfo, 169 : SasbusPeriodicReceiveModeInfo, 178 : PDMInfo, 179 : OLSCInfo, 180 : SREPOInfo, 181 : DauthInfo, 187 : SasbusInfo, 189 : PWMInfo, 191 : RTCInfo, 192 : regulatorInfo, 193 : LEDInfo, 197 : clkrstInfo, 202 : HIDInfo, 203 : LDNInfo, 205 : IRsensorInfo, 206 : captureInfo, 208 : manuInfo, 209 : ATKInfo, 210 : webInfo, 211 : LCSInfo, 212 : GRCInfo, 214 : albumInfo, 216 : migrationInfo, 217 : migrationIdcServerInfo, 218 : hidbusInfo, 223 : websocketInfo, 229 : notificationInfo, 230 : insInfo, 231 : lp2pInfo, 345 : libnxInfo, 346 : homebrewABIInfo, 347 : homebrewLoaderInfo, 348 : libnxNVIDIAErrorsInfo, 349 : libnxBinderErrorsInfo, 131 : A83Info};
 
 module.exports = {NXModules};
 
