@@ -4,7 +4,7 @@ const NXErrorCodes = require('./NXErrorCodes.js');
 const fs = require('fs');
 const os = require('os');
 const bent = require('bent');
-const version = '0.2.0';
+const version = '0.3.0';
 const prefix = '!';
 
 //Run when the bot is ready
@@ -23,9 +23,16 @@ client.on('message', msg =>{
     switch (commandText) {
         //Toggle the tester role
         case prefix + 'tester':
+        //Check if message sent in guild
+        if(msg.guild === null)
+        {
+            msg.channel.send('This command must be used in a server!');
+            return;
+        }
+        //Get the tester role
         const testerRole = msg.guild.roles.cache.find(item => item.name === 'Tester');
-        if(msg.member.roles.cache.find(item => item.name === 'Tester')) msg.member.roles.remove(testerRole);
-        else msg.member.roles.add(testerRole);
+        if(msg.member.roles.cache.find(item => item.name === 'Tester')) msg.member.roles.remove(testerRole); //Remove the role if the user is already a tester
+        else msg.member.roles.add(testerRole); //Add the role is the user is not a tester
         break;
         //Switch error code info command
         case prefix + 'serr':
@@ -71,7 +78,8 @@ client.on('message', msg =>{
         {name: prefix + 'About', value: 'Gives info about Pheme'},
         {name: prefix + 'Tester', value: 'Toggles if you are a tester'},
         {name: prefix + 'Serr <error code>', value: 'Gives info about a Nintendo Switch error code'},
-        {name: prefix + 'Amiibo <Amiibo name>', value: 'Gets information about an Amiibo'});
+        {name: prefix + 'Amiibo <Amiibo name>', value: 'Gets information about an Amiibo'},
+        {name: prefix + 'profile <@user>', value: 'Gives info about a user'});
         msg.channel.send(helpEmbed);
         break;
         //about command
@@ -99,6 +107,38 @@ client.on('message', msg =>{
             msg.channel.send(amiiboEmbed);
         })
         .catch(error => {msg.channel.send(error.message + ' (did you enter the correct Amiibo name?)');});
+        break;
+        //Get profile info command
+        case prefix + 'profile':
+        if(msg.guild === null)
+        {
+            msg.channel.send('This command must be used in a server!');
+            return;
+        }
+        var memberToGetInfoOf;
+        var userToGetInfoOf;
+        //If the user didn't ping someone get their own member object
+        if(msg.mentions.members.size == 0) memberToGetInfoOf = msg.member;
+        else memberToGetInfoOf = msg.mentions.members.first();
+        //Get the user object
+        userToGetInfoOf = memberToGetInfoOf.user;
+        //Get all of the user's roles
+        var roleString = '';
+        memberToGetInfoOf.roles.cache.forEach(element => {
+            roleString += element.name + ', ';
+        });
+        roleString = roleString.substr(0, roleString.length - 13);
+        if(roleString.length == 0) roleString = 'No roles';
+        //Construct the embed
+        var profileEmbed = new discord.MessageEmbed()
+        .setColor(memberToGetInfoOf.roles.highest.color)
+        .setAuthor(userToGetInfoOf.tag, userToGetInfoOf.avatarURL())
+        .addFields({name: 'ID', value: userToGetInfoOf.id}, //Show the user ID
+        {name: 'Profile created on', value: new Date(userToGetInfoOf.createdAt)}, //Show the date the profile was created
+        {name: 'Joined ' + msg.guild.name + ' on', value: memberToGetInfoOf.joinedAt}, //Show the date the user joined the server
+        {name: 'Roles', value: roleString})
+        .setThumbnail(userToGetInfoOf.avatarURL());
+        msg.channel.send(profileEmbed);
         break;
     }
 });
